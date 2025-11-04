@@ -1,0 +1,40 @@
+ext {
+    /**
+     * Simple semantic versioning implementation
+     *
+     * It is designed to support release annotations such as -SNAPSHOT or -RC1..98 to differentiate
+     * between final version (i.e. stable) release from the release candidates
+     *
+     * Suffix explanation:
+     * SNAPSHOT = 0
+     * RC1..98 = 1..98 (maximum of 98 release candidates per version)
+     * No suffix (final release) = 99
+     *
+     * Version code result examples:
+     * v1.0.0-SHAPSHOT = 1000000,
+     * v1.0.0-RC1 = 1000001,
+     * v1.0.0 = 1000099,
+     * v1.0.1-RC5 = 1000105,
+     * etc.
+     * @return
+     */
+    buildVersionCode = {
+        def candidateCode = "99"
+        def (major, minor, patch) = version.toLowerCase().replaceAll('-', '').tokenize('.')
+        if (patch.endsWith("snapshot")) {
+            candidateCode = "0"
+            patch = patch.replaceAll("[^0-9]","")
+        } else {
+            def rc
+            (patch, rc) = patch.tokenize("rc")
+            if (rc) {
+                candidateCode = rc
+            }
+        }
+
+        (major, minor, patch, candidateCode) = [major, minor, patch, candidateCode].collect{it.toInteger()}
+
+        (major * 1000000) + (minor * 10000) + (patch * 100) + candidateCode
+    }
+}
+
