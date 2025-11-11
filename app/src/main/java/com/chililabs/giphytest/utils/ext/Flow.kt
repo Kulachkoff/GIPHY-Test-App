@@ -36,6 +36,20 @@ fun <D> Flow<Result<D>>.onError(action: suspend (Throwable) -> Unit): Flow<Resul
 fun <D> Flow<Result<D>>.logOnError(): Flow<Result<D>> =
     onError { it.message?.let { msg -> Timber.tag("Flow").e(msg) } }
 
+fun <T> flowCatching(
+    tag: String = "Flow",
+    message: String = "An error occurred",
+    block: suspend kotlinx.coroutines.flow.FlowCollector<T?>.() -> Unit
+): Flow<T?> = flow(block).catchAndEmitNull(tag, message)
+
+fun <T> Flow<T?>.catchAndEmitNull(
+    tag: String = "Flow",
+    message: String = "An error occurred"
+): Flow<T?> = catch { e ->
+    Timber.tag(tag).e(e, message)
+    emit(null)
+}
+
 /**
  * This extension function is primarily used in the ViewModels
  * allowing to collect and work with any incoming Result data.

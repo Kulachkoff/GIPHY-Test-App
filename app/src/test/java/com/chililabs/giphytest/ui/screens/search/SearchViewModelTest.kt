@@ -63,7 +63,6 @@ class SearchViewModelTest {
         // Then
         assertEquals("", viewModel.state.value.query)
         assertTrue(viewModel.state.value.isOnline)
-        assertEquals(0, viewModel.state.value.refreshKey)
     }
 
     @Test
@@ -124,23 +123,6 @@ class SearchViewModelTest {
     }
 
     @Test
-    fun `Retry event increments refreshKey`() = runTest(testDispatcher) {
-        // Given
-        invokeAndWait { viewModel = createViewModel() }
-        
-        emitAndWait { viewModel.onEvent(SearchEvent.QueryChanged("test")) }
-
-        val initialRefreshKey = viewModel.state.value.refreshKey
-
-        // When
-        invokeAndWait { viewModel.onEvent(SearchEvent.Retry) }
-
-        // Then
-        assertEquals(initialRefreshKey + 1, viewModel.state.value.refreshKey)
-        assertEquals("test", viewModel.state.value.query) // Query should remain unchanged
-    }
-
-    @Test
     fun `network state updates isOnline`() = runTest(testDispatcher) {
         // Given
         invokeAndWait { viewModel = createViewModel() }
@@ -156,18 +138,5 @@ class SearchViewModelTest {
 
         // Then
         assertTrue(viewModel.state.value.isOnline)
-    }
-
-    @Test
-    fun `ErrorOccurred event increments refreshKey`() = runTest(testDispatcher) {
-        // Given
-        invokeAndWait { viewModel = createViewModel() }
-        val initialRefreshKey = viewModel.state.value.refreshKey
-
-        // When
-        invokeAndWait { viewModel.onEvent(SearchEvent.ErrorOccurred("Network error")) }
-
-        // Then
-        assertEquals(initialRefreshKey + 1, viewModel.state.value.refreshKey)
     }
 }

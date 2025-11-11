@@ -58,19 +58,16 @@ class GifsRepositoryImplTest {
     }
 
     @Test
-    fun `getById propagates exception when API throws`() = runTest {
+    fun `getById returns null when API throws exception`() = runTest {
         // Given
         val gifId = "test-id"
         val exception = RuntimeException("Network error")
         coEvery { giphyApi.getById(gifId) } throws exception
 
-        // When/Then
-        try {
-            repository.getById(gifId).first()
-            assert(false) { "Expected exception to be thrown" }
-        } catch (e: RuntimeException) {
-            assertEquals(exception, e)
-        }
+        // When
+        val result = repository.getById(gifId).first()
+
+        // Then
+        assertNull(result)
     }
 }
-
