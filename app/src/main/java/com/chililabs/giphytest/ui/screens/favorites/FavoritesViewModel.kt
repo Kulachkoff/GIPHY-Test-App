@@ -7,7 +7,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class FavoritesViewModel @Inject constructor(
-    private val observeFavorites: GetFavoritesUseCase
+    observeFavorites: GetFavoritesUseCase
 ) : BaseViewModel<FavoritesState, FavoritesEvent>(
     initialState = FavoritesState()
 ) {
@@ -36,7 +36,7 @@ class FavoritesViewModel @Inject constructor(
             is FavoritesEvent.ItemClicked ->
                 sendEffect(FavoritesEffect.NavigateToDetails(event.gifId))
 
-            FavoritesEvent.Refresh -> Unit
+            is FavoritesEvent.Refresh -> {}
         }
     }
 }

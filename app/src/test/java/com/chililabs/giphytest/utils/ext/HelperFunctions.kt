@@ -5,7 +5,7 @@ import kotlinx.coroutines.test.TestScope
 import kotlinx.coroutines.test.advanceTimeBy
 import kotlinx.coroutines.test.advanceUntilIdle
 
-internal const val DEFAULT_DEBOUNCE_MS = 500L
+internal const val DEFAULT_DEBOUNCE_MS = 500L // Should match Constants.SEARCH_DEBOUNCE_MS
 
 @OptIn(ExperimentalCoroutinesApi::class)
 internal fun TestScope.advancePastDebounce(ms: Long = DEFAULT_DEBOUNCE_MS) {

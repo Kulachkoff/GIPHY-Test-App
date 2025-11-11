@@ -3,6 +3,7 @@ package com.chililabs.giphytest.ui.screens.search
 import androidx.lifecycle.SavedStateHandle
 import androidx.lifecycle.viewModelScope
 import com.chililabs.giphytest.ui.base.BaseViewModel
+import com.chililabs.giphytest.utils.Constants.SEARCH_DEBOUNCE_MS
 import com.chililabs.giphytest.utils.network.NetworkMonitor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -27,10 +28,10 @@ class SearchViewModel @Inject constructor(
             .launchIn(viewModelScope)
 
         queries
-            .debounce(500)
+            .debounce(SEARCH_DEBOUNCE_MS)
             .distinctUntilChanged()
             .onEach { query ->
-                updateState { copy(query = query, errorMessage = null) }
+                updateState { copy(query = query) }
                 savedStateHandle["query"] = query
             }
             .launchIn(viewModelScope)
@@ -46,8 +47,9 @@ class SearchViewModel @Inject constructor(
             is SearchEvent.ItemClicked ->
                 sendEffect(SearchEffect.NavigateToDetails(event.gifId))
 
-            SearchEvent.Retry ->
-                queries.emit(state.value.query)
+            is SearchEvent.ErrorOccurred -> {}
+
+            is SearchEvent.Retry -> {}
         }
     }
 }

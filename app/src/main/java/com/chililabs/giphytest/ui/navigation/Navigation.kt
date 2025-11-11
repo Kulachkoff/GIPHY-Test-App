@@ -64,10 +64,10 @@ fun Navigation(
                     else -> Unit
                 }
             },
-            content = { state, dispatch, _ ->
+            content = { state, onEvent, _ ->
                 SearchScreen(
                     state = state,
-                    onEvent = dispatch
+                    onEvent = onEvent
                 )
             }
         )
@@ -86,10 +86,10 @@ fun Navigation(
                     else -> Unit
                 }
             },
-            content = { state, dispatch, _ ->
+            content = { state, onEvent, _ ->
                 FavoritesScreen(
                     state = state,
-                    onEvent = dispatch
+                    onEvent = onEvent
                 )
             }
         )
@@ -114,10 +114,10 @@ fun Navigation(
                     else -> Unit
                 }
             },
-            content = { state, dispatch, _ ->
+            content = { state, onEvent, _ ->
                 DetailsScreen(
                     state = state,
-                    onEvent = dispatch
+                    onEvent = onEvent
                 )
             }
         )
@@ -134,7 +134,7 @@ inline fun <reified VM : BaseViewModel<S, E>, S, E> NavGraphBuilder.screenWithBa
     durationMs: Int = 300,
     crossinline stateOf: (VM) -> StateFlow<S>,
     crossinline onEffect: (effect: BaseEffect, ctx: Context, entry: NavBackStackEntry, nav: NavHostController) -> Unit = { _, _, _, _ -> },
-    crossinline content: @Composable (state: S, dispatch: (E) -> Unit, entry: NavBackStackEntry) -> Unit
+    crossinline content: @Composable (state: S, onEvent: (E) -> Unit, entry: NavBackStackEntry) -> Unit
 ) {
     composable(
         route = route,
@@ -146,7 +146,7 @@ inline fun <reified VM : BaseViewModel<S, E>, S, E> NavGraphBuilder.screenWithBa
     ) { entry ->
         val viewModel: VM = hiltViewModel(entry)
         val state by stateOf(viewModel).collectAsStateWithLifecycle()
-        val dispatch = remember(viewModel) { { e: E -> viewModel.onEvent(e) } }
+        val onEvent = remember(viewModel) { { e: E -> viewModel.onEvent(e) } }
         val context = LocalContext.current
 
         LaunchedEffect(viewModel, navController) {
@@ -166,7 +166,7 @@ inline fun <reified VM : BaseViewModel<S, E>, S, E> NavGraphBuilder.screenWithBa
             }
         }
 
-        content(state, dispatch, entry)
+        content(state, onEvent, entry)
     }
 }
 

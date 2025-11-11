@@ -3,6 +3,7 @@ package com.chililabs.giphytest.ui.main
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
+import androidx.compose.material.icons.filled.FavoriteBorder
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -15,6 +16,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
+import com.chililabs.giphytest.ui.navigation.DetailsRoute
 import com.chililabs.giphytest.ui.navigation.FavoritesRoute
 import com.chililabs.giphytest.ui.navigation.Navigation
 import com.chililabs.giphytest.ui.navigation.SearchRoute
@@ -23,8 +25,8 @@ import com.chililabs.giphytest.ui.navigation.SearchRoute
 fun HostScreen() {
     val navController = rememberNavController()
     val items = listOf(
-        SearchRoute.route to "Search",
-        FavoritesRoute.route to "Favorites"
+        SearchRoute,
+        FavoritesRoute
     )
 
     Scaffold(
@@ -33,25 +35,33 @@ fun HostScreen() {
                 val current by navController.currentBackStackEntryAsState()
                 val currentRoute = current?.destination?.route
 
-                items.forEach { (route, label) ->
-                    val selected = currentRoute == route
+                items.forEach { route ->
+                    val selected = currentRoute == route.route
                     NavigationBarItem(
                         selected = selected,
                         onClick = {
-                            navController.navigate(route) {
-                                popUpTo(SearchRoute.route) { inclusive = false }
+                            navController.navigate(route.route) {
+                                popUpTo(SearchRoute.route) { saveState = true }
                                 launchSingleTop = true
+                                restoreState = true
                             }
                         },
                         icon = {
-                            Icon(
-                                imageVector =
-                                    if (route == SearchRoute.route) Icons.Default.Search
-                                    else Icons.Default.Favorite,
-                                contentDescription = null
-                            )
+                            when (route) {
+                                is SearchRoute -> Icons.Default.Search
+                                is FavoritesRoute -> {
+                                    if (currentRoute == route.route) Icons.Default.Favorite
+                                    else Icons.Default.FavoriteBorder
+                                }
+                                is DetailsRoute -> null
+                            }?.let {
+                                Icon(
+                                    imageVector = it,
+                                    contentDescription = null
+                                )
+                            }
                         },
-                        label = { Text(text = label) }
+                        label = { Text(text = route.title) }
                     )
                 }
             }

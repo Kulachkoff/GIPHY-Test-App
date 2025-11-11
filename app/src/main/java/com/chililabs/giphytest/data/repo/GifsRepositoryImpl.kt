@@ -6,6 +6,7 @@ import com.chililabs.giphytest.domain.model.Gif
 import com.chililabs.giphytest.domain.repo.GifsRepository
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
+import timber.log.Timber
 import javax.inject.Inject
 
 class GifsRepositoryImpl @Inject constructor(
@@ -13,8 +14,12 @@ class GifsRepositoryImpl @Inject constructor(
 ) : GifsRepository {
 
     override fun getById(gifId: String): Flow<Gif?> = flow {
-        val gifDto = giphyApi.getById(gifId)?.data
-
-        emit(gifDto?.toDomain())
+        try {
+            val gifDto = giphyApi.getById(gifId)?.data
+            emit(gifDto?.toDomain())
+        } catch (e: Exception) {
+            Timber.e(e, "Failed to fetch GIF with id: $gifId")
+            emit(null)
+        }
     }
 }

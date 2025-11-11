@@ -8,6 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.viewinterop.AndroidView
+import com.chililabs.giphytest.utils.Constants.GRID_CELL_PADDING
+import com.chililabs.giphytest.utils.Constants.GRID_ITEM_CORNER_RADIUS
+import com.chililabs.giphytest.utils.Constants.GRID_PLACEHOLDER_COLOR
+import com.chililabs.giphytest.utils.Constants.GRID_THREE_COLUMNS_MIN_WIDTH_DP
 import com.giphy.sdk.core.models.Media
 import com.giphy.sdk.core.models.enums.MediaType
 import com.giphy.sdk.ui.GiphyLoadingProvider
@@ -24,7 +28,7 @@ fun GiphyGrid(
     onError: (String) -> Unit
 ) {
     val configuration = LocalConfiguration.current
-    val columns = if (configuration.screenWidthDp >= 600) 3 else 2
+    val columns = if (configuration.screenWidthDp >= GRID_THREE_COLUMNS_MIN_WIDTH_DP) 3 else 2
     val vertical = configuration.orientation != Configuration.ORIENTATION_LANDSCAPE
 
     AndroidView(
@@ -33,13 +37,13 @@ fun GiphyGrid(
             GiphyGridView(context).apply {
                 direction = if (vertical) GiphyGridView.VERTICAL else GiphyGridView.HORIZONTAL
                 spanCount = columns
-                cellPadding = 8
+                cellPadding = GRID_CELL_PADDING
                 setGiphyLoadingProvider(object : GiphyLoadingProvider {
                     override fun getLoadingDrawable(position: Int): Drawable {
                         return GradientDrawable().apply {
                             shape = GradientDrawable.RECTANGLE
-                            cornerRadius = 16f
-                            setColor(0xFFE0E0E0.toInt())
+                            cornerRadius = GRID_ITEM_CORNER_RADIUS
+                            setColor(GRID_PLACEHOLDER_COLOR)
                         }
                     }
                 })
