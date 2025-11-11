@@ -119,7 +119,7 @@ class SearchViewModelTest {
         viewModel.effects.test {
             val effect = awaitItem()
             assertTrue(effect is SearchEffect.NavigateToDetails)
-            assertEquals("gif-id-123", (effect as SearchEffect.NavigateToDetails).id)
+            assertEquals("gif-id-123", (effect as SearchEffect.NavigateToDetails).gifId)
         }
     }
 

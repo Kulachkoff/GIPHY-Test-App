@@ -29,7 +29,7 @@ fun SearchField(
     OutlinedTextField(
         modifier = modifier,
         value = value,
-        onValueChange = { onValueChange(value) },
+        onValueChange = onValueChange,
         shape = shape,
         placeholder = { Text(placeholder) },
         singleLine = singleLine,

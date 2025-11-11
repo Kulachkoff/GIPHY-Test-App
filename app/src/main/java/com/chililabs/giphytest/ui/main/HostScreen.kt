@@ -4,72 +4,114 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
-import androidx.compose.material.icons.filled.Search
+import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.NavigationBar
 import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
-import com.chililabs.giphytest.ui.navigation.DetailsRoute
+import com.chililabs.giphytest.ui.main.components.AppTopBar
 import com.chililabs.giphytest.ui.navigation.FavoritesRoute
 import com.chililabs.giphytest.ui.navigation.Navigation
 import com.chililabs.giphytest.ui.navigation.SearchRoute
+import com.chililabs.giphytest.utils.ext.hasBottomBar
+import com.chililabs.giphytest.utils.ext.hasTopBar
 
 @Composable
-fun HostScreen() {
+fun HostScreen(
+    navigationViewModel: NavigationViewModel = hiltViewModel()
+) {
     val navController = rememberNavController()
+    val currentRoute by navigationViewModel.currentRoute.collectAsState()
+    val backStackEntry by navController.currentBackStackEntryAsState()
+
     val items = listOf(
         SearchRoute,
         FavoritesRoute
     )
 
-    Scaffold(
-        bottomBar = {
-            NavigationBar {
-                val current by navController.currentBackStackEntryAsState()
-                val currentRoute = current?.destination?.route
+    val topBarConfig by navigationViewModel.topBarConfig.collectAsState()
 
-                items.forEach { route ->
-                    val selected = currentRoute == route.route
-                    NavigationBarItem(
-                        selected = selected,
-                        onClick = {
-                            navController.navigate(route.route) {
-                                popUpTo(SearchRoute.route) { saveState = true }
-                                launchSingleTop = true
-                                restoreState = true
-                            }
-                        },
-                        icon = {
-                            when (route) {
-                                is SearchRoute -> Icons.Default.Search
-                                is FavoritesRoute -> {
-                                    if (currentRoute == route.route) Icons.Default.Favorite
-                                    else Icons.Default.FavoriteBorder
+    Scaffold(
+        topBar = {
+            if (currentRoute.hasTopBar())
+                AppTopBar(
+                    currentRoute = currentRoute,
+                    onBackClick = { navController.popBackStack() },
+                    title = topBarConfig.title,
+                    actions = {
+                        topBarConfig.actions.forEach { action ->
+                            when (action) {
+                                is TopBarAction.Share -> {
+                                    IconButton(onClick = action.onClick) {
+                                        Icon(
+                                            imageVector = Icons.Default.Share,
+                                            contentDescription = "Share"
+                                        )
+                                    }
                                 }
-                                is DetailsRoute -> null
-                            }?.let {
+                                is TopBarAction.Favorite -> {
+                                    IconButton(onClick = action.onClick) {
+                                        Icon(
+                                            imageVector = if (action.isFavorite) {
+                                                Icons.Default.Favorite
+                                            } else {
+                                                Icons.Default.FavoriteBorder
+                                            },
+                                            contentDescription = if (action.isFavorite) {
+                                                "Remove from favorites"
+                                            } else {
+                                                "Add to favorites"
+                                            }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                )
+        },
+        bottomBar = {
+            if (currentRoute.hasBottomBar()) {
+                NavigationBar {
+                    items.forEach { route ->
+                        val selected = currentRoute == route
+                        NavigationBarItem(
+                            selected = selected,
+                            onClick = {
+                                navController.navigate(route.route) {
+                                    popUpTo(SearchRoute.route) { saveState = true }
+                                    launchSingleTop = true
+                                    restoreState = true
+                                }
+                            },
+                            icon = {
+                                val icon = if (currentRoute == route) route.selectedIcon else route.icon
                                 Icon(
-                                    imageVector = it,
+                                    imageVector = icon,
                                     contentDescription = null
                                 )
-                            }
-                        },
-                        label = { Text(text = route.title) }
-                    )
+                            },
+                            label = { Text(text = route.title) }
+                        )
+                    }
                 }
             }
         }
     ) { padding ->
         Navigation(
             modifier = Modifier.padding(padding),
-            navController = navController
+            navController = navController,
+            navigationViewModel = navigationViewModel
         )
     }
 }

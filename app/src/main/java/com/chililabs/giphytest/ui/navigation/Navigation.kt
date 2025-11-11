@@ -1,29 +1,17 @@
 package com.chililabs.giphytest.ui.navigation
 
-import android.content.Context
 import android.content.Intent
-import android.widget.Toast
-import androidx.compose.animation.core.tween
-import androidx.compose.animation.slideInHorizontally
-import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
-import androidx.hilt.lifecycle.viewmodel.compose.hiltViewModel
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.navigation.NamedNavArgument
-import androidx.navigation.NavBackStackEntry
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
-import androidx.navigation.compose.composable
-import com.chililabs.giphytest.ui.base.BaseEffect
-import com.chililabs.giphytest.ui.base.BaseViewModel
-import com.chililabs.giphytest.ui.base.CommonEffect
+import androidx.navigation.navigation
+import com.chililabs.giphytest.ui.main.NavigationViewModel
+import com.chililabs.giphytest.ui.main.TopBarAction
+import com.chililabs.giphytest.ui.main.TopBarConfig
 import com.chililabs.giphytest.ui.screens.details.DetailsEffect
 import com.chililabs.giphytest.ui.screens.details.DetailsEvent
 import com.chililabs.giphytest.ui.screens.details.DetailsScreen
@@ -39,172 +27,135 @@ import com.chililabs.giphytest.ui.screens.search.SearchEvent
 import com.chililabs.giphytest.ui.screens.search.SearchScreen
 import com.chililabs.giphytest.ui.screens.search.SearchState
 import com.chililabs.giphytest.ui.screens.search.SearchViewModel
-import kotlinx.coroutines.flow.StateFlow
+import com.chililabs.giphytest.utils.ext.screenWithBaseVM
+
+typealias MainRoute = Route.Main
+typealias SearchRoute = Route.Main.Tab.Search
+typealias FavoritesRoute = Route.Main.Tab.Favorites
+typealias DetailsRoute = Route.Main.Common.Details
 
 @Composable
 fun Navigation(
     modifier: Modifier = Modifier,
+    navigationViewModel: NavigationViewModel,
     navController: NavHostController
 ) {
     NavHost(
         modifier = modifier,
         navController = navController,
-        startDestination = SearchRoute.route
+        startDestination = MainRoute.route
     ) {
-        screenWithBaseVM<SearchViewModel, SearchState, SearchEvent>(
-            route = SearchRoute.route,
-            navController = navController,
-            stateOf = { it.state },
-            onEffect = { effect, _, _, navController ->
-                when (effect) {
-                    is SearchEffect.NavigateToDetails -> {
-                        navController.navigateToDetails(effect.id)
-                    }
-
-                    else -> Unit
-                }
-            },
-            content = { state, onEvent, _ ->
-                SearchScreen(
-                    state = state,
-                    onEvent = onEvent
-                )
-            }
-        )
-
-        screenWithBaseVM<FavoritesViewModel, FavoritesState, FavoritesEvent>(
-            route = FavoritesRoute.route,
-            navController = navController,
-            reverse = true,
-            stateOf = { it.state },
-            onEffect = { effect, _, _, navController ->
-                when (effect) {
-                    is FavoritesEffect.NavigateToDetails -> {
-                        navController.navigateToDetails(effect.id)
-                    }
-
-                    else -> Unit
-                }
-            },
-            content = { state, onEvent, _ ->
-                FavoritesScreen(
-                    state = state,
-                    onEvent = onEvent
-                )
-            }
-        )
-
-        screenWithBaseVM<DetailsViewModel, DetailsState, DetailsEvent>(
-            route = DetailsRoute.PATTERN,
-            navController = navController,
-            arguments = DetailsRoute.ARGS,
-            reverse = true,
-            stateOf = { it.state },
-            onEffect = { effect, context, _, navController ->
-                when (effect) {
-                    is DetailsEffect.NavigateBack -> navController.popBackStack()
-                    is DetailsEffect.ShareLink -> {
-                        val send = Intent(Intent.ACTION_SEND).apply {
-                            type = "text/plain"
-                            putExtra(Intent.EXTRA_TEXT, effect.url)
-                        }
-                        context.startActivity(Intent.createChooser(send, "Share GIF"))
-                    }
-
-                    else -> Unit
-                }
-            },
-            content = { state, onEvent, _ ->
-                DetailsScreen(
-                    state = state,
-                    onEvent = onEvent
-                )
-            }
-        )
+        mainGraph(navController, navigationViewModel)
     }
 }
 
-fun NavController.navigateToDetails(gifId: String) = navigate(DetailsRoute(gifId).build())
-
-inline fun <reified VM : BaseViewModel<S, E>, S, E> NavGraphBuilder.screenWithBaseVM(
-    route: String,
+fun NavGraphBuilder.mainGraph(
     navController: NavHostController,
-    arguments: List<NamedNavArgument> = emptyList(),
-    reverse: Boolean = false,
-    durationMs: Int = 300,
-    crossinline stateOf: (VM) -> StateFlow<S>,
-    crossinline onEffect: (effect: BaseEffect, ctx: Context, entry: NavBackStackEntry, nav: NavHostController) -> Unit = { _, _, _, _ -> },
-    crossinline content: @Composable (state: S, onEvent: (E) -> Unit, entry: NavBackStackEntry) -> Unit
+    navigationViewModel: NavigationViewModel
 ) {
-    composable(
-        route = route,
-        arguments = arguments,
-        enterTransition = { enterTx(reverse, durationMs) },
-        exitTransition = { exitTx(reverse, durationMs) },
-        popEnterTransition = { popEnterTx(reverse, durationMs) },
-        popExitTransition = { popExitTx(reverse, durationMs) }
-    ) { entry ->
-        val viewModel: VM = hiltViewModel(entry)
-        val state by stateOf(viewModel).collectAsStateWithLifecycle()
-        val onEvent = remember(viewModel) { { e: E -> viewModel.onEvent(e) } }
-        val context = LocalContext.current
+    navigation(
+        startDestination = SearchRoute.route,
+        route = MainRoute.route
+    ) {
+        tabsGraph(navController, navigationViewModel)
+        detailsGraph(navController, navigationViewModel)
+    }
+}
 
-        LaunchedEffect(viewModel, navController) {
-            viewModel.effects.collect { effect ->
-                when (effect) {
-                    is CommonEffect.ShowToast -> Toast
-                        .makeText(
-                            context,
-                            effect.message,
-                            if (effect.long) Toast.LENGTH_LONG else Toast.LENGTH_SHORT
-                        )
-                        .show()
-
-                    else -> Unit
-                }
-                onEffect(effect, context, entry, navController)
+fun NavGraphBuilder.tabsGraph(
+    navController: NavHostController,
+    navigationViewModel: NavigationViewModel
+) {
+    screenWithBaseVM<SearchViewModel, SearchState, SearchEvent>(
+        route = SearchRoute.route,
+        navController = navController,
+        stateOf = { it.state },
+        onEffect = { effect, _, _, navHostController ->
+            when (effect) {
+                is SearchEffect.NavigateToDetails -> navHostController.navigateToDetails(effect.gifId)
+                else -> Unit
             }
         }
+    ) { state, onEvent, _ ->
+        LaunchedEffect(Unit) {
+            navigationViewModel.setCurrentRoute(SearchRoute)
+        }
 
-        content(state, onEvent, entry)
+        SearchScreen(state = state, onEvent = onEvent)
+    }
+
+    screenWithBaseVM<FavoritesViewModel, FavoritesState, FavoritesEvent>(
+        route = FavoritesRoute.route,
+        navController = navController,
+        reverse = true,
+        stateOf = { it.state },
+        onEffect = { effect, _, _, navHostControllerav ->
+            when (effect) {
+                is FavoritesEffect.NavigateToDetails -> navHostControllerav.navigateToDetails(effect.gifId)
+                else -> Unit
+            }
+        }
+    ) { state, onEvent, _ ->
+        LaunchedEffect(Unit) {
+            navigationViewModel.setCurrentRoute(FavoritesRoute)
+        }
+
+        FavoritesScreen(state = state, onEvent = onEvent)
     }
 }
 
-fun NavGraphBuilder.screen(
-    route: String,
-    reverse: Boolean = false,
-    durationMs: Int = 300,
-    content: @Composable (NavBackStackEntry) -> Unit
+fun NavGraphBuilder.detailsGraph(
+    navController: NavHostController,
+    navigationViewModel: NavigationViewModel
 ) {
-    composable(
-        route = route,
-        enterTransition = { enterTx(reverse, durationMs) },
-        exitTransition = { exitTx(reverse, durationMs) },
-        popEnterTransition = { popEnterTx(reverse, durationMs) },
-        popExitTransition = { popExitTx(reverse, durationMs) }
-    ) { entry -> content(entry) }
+    screenWithBaseVM<DetailsViewModel, DetailsState, DetailsEvent>(
+        route = DetailsRoute.route,
+        navController = navController,
+        arguments = DetailsRoute.args,
+        reverse = true,
+        stateOf = { it.state },
+        onEffect = { effect, context, _, navHostController ->
+            when (effect) {
+                is DetailsEffect.NavigateBack -> navHostController.popBackStack()
+                is DetailsEffect.ShareLink -> {
+                    val send = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, effect.url)
+                    }
+                    context.startActivity(Intent.createChooser(send, "Share GIF"))
+                }
+                else -> Unit
+            }
+        }
+    ) { state, onEvent, _ ->
+        LaunchedEffect(Unit) {
+            navigationViewModel.setCurrentRoute(DetailsRoute)
+        }
+
+        // Update top bar with dynamic content from DetailsState
+        LaunchedEffect(state.gif, state.isFavorite) {
+            val title = state.gif?.title ?: "Details"
+            val actions = buildList {
+                state.gif?.url?.let {
+                    add(TopBarAction.Share(onClick = { onEvent(DetailsEvent.Share) }))
+                }
+                add(
+                    TopBarAction.Favorite(
+                        isFavorite = state.isFavorite,
+                        onClick = { onEvent(DetailsEvent.Favorite) }
+                    )
+                )
+            }
+            navigationViewModel.updateTopBarConfig(
+                TopBarConfig(title = title, actions = actions)
+            )
+        }
+
+        DetailsScreen(
+            state = state,
+            onEvent = onEvent
+        )
+    }
 }
 
-fun enterTx(reverse: Boolean, duration: Int) =
-    slideInHorizontally(
-        animationSpec = tween(duration),
-        initialOffsetX = { w -> if (reverse) +w else -w }
-    )
-
-fun exitTx(reverse: Boolean, duration: Int) =
-    slideOutHorizontally(
-        animationSpec = tween(duration),
-        targetOffsetX = { w -> if (reverse) +w else -w }
-    )
-
-fun popEnterTx(reverse: Boolean, duration: Int) =
-    slideInHorizontally(
-        animationSpec = tween(duration),
-        initialOffsetX = { w -> if (reverse) +w else -w }
-    )
-
-fun popExitTx(reverse: Boolean, duration: Int) =
-    slideOutHorizontally(
-        animationSpec = tween(duration),
-        targetOffsetX = { w -> if (reverse) +w else -w }
-    )
+fun NavController.navigateToDetails(gifId: String) = navigate(DetailsRoute.build(gifId))

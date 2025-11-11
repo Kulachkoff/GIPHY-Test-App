@@ -102,7 +102,7 @@ class FavoritesViewModelTest {
         viewModel.effects.test {
             val effect = awaitItem()
             assertTrue(effect is FavoritesEffect.NavigateToDetails)
-            assertEquals("gif-id-123", (effect as FavoritesEffect.NavigateToDetails).id)
+            assertEquals("gif-id-123", (effect as FavoritesEffect.NavigateToDetails).gifId)
         }
     }
 
