@@ -17,10 +17,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.key
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
+import com.chililabs.giphytest.R
+import com.chililabs.giphytest.ui.theme.Dimens
 import com.giphy.sdk.ui.views.GPHMediaView
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -38,7 +40,7 @@ fun DetailsScreen(
                     .fillMaxWidth()
                     .align(Alignment.TopCenter)
                     .aspectRatio(1f)
-                    .padding(16.dp),
+                    .padding(Dimens.detailsImagePadding),
                 factory = { context ->
                     GPHMediaView(context).apply {
                         setMediaWithId(
@@ -50,13 +52,13 @@ fun DetailsScreen(
         }
 
         Column(
-            Modifier
+            modifier = Modifier
                 .align(Alignment.BottomStart)
-                .padding(16.dp)
+                .padding(Dimens.detailsContentPadding)
         ) {
             state.gif?.username?.let {
                 Text(
-                    text = "By @$it",
+                    text = stringResource(R.string.details_by_user, it),
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
@@ -84,11 +86,13 @@ fun DetailsScreen(
             ) {
                 Text(text = errorMessage)
 
-                Spacer(modifier = Modifier.height(8.dp))
+                Spacer(modifier = Modifier.height(Dimens.detailsSpacerHeight))
 
                 Button(
                     onClick = { onEvent(DetailsEvent.Retry) }
-                ) { Text(text = "Retry") }
+                ) {
+                    Text(text = stringResource(R.string.details_retry))
+                }
             }
         }
     }

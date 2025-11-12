@@ -15,12 +15,14 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
+import com.chililabs.giphytest.R
 import com.chililabs.giphytest.ui.screens.search.components.GiphyGrid
 import com.chililabs.giphytest.ui.screens.search.components.OfflineBanner
 import com.chililabs.giphytest.ui.screens.search.components.SearchField
 import com.chililabs.giphytest.ui.screens.search.components.TrendingTagsRow
+import com.chililabs.giphytest.ui.theme.Dimens
 
 @Composable
 fun SearchScreen(
@@ -33,17 +35,17 @@ fun SearchScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = Dimens.screenHorizontal)
     ) {
         OfflineBanner(
             visible = !state.isOnline,
-            text = "You're offline"
+            text = stringResource(R.string.search_offline_message)
         )
 
         SearchField(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(vertical = 12.dp),
+                .padding(vertical = Dimens.searchFieldVertical),
             value = text,
             onValueChange = {
                 text = it
@@ -53,9 +55,9 @@ fun SearchScreen(
                 text = ""
                 onEvent(SearchEvent.QueryChanged(""))
             },
-            placeholder = "Search GIPHY",
+            placeholder = stringResource(R.string.search_placeholder),
             singleLine = true,
-            shape = RoundedCornerShape(8.dp),
+            shape = RoundedCornerShape(Dimens.searchFieldCornerRadius),
             leadingIcon = Icons.Default.Search,
             trailingIcon = Icons.Default.Close,
             suggestions = state.autocompleteSuggestions,

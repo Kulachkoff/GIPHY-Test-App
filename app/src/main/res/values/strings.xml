@@ -1,3 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">My Application</string>
+    <!-- App Name -->
+    <string name="app_name">GIPHY Test</string>
+
+    <!-- Navigation -->
+    <string name="nav_main">Main</string>
+    <string name="nav_search">Search</string>
+    <string name="nav_favorites">Favorites</string>
+    <string name="nav_details">Details</string>
+    <string name="nav_settings">Settings</string>
+
+    <!-- Search Screen -->
+    <string name="search_placeholder">Search GIPHY</string>
+    <string name="search_offline_message">You\'re offline</string>
+    <string name="cd_search">Search GIPHY</string>
+    <string name="cd_clear_search">Clear Search</string>
+
+    <!-- Favorites Screen -->
+    <string name="favorites_empty">No favorites yet</string>
+
+    <!-- Details Screen -->
+    <string name="details_by_user">By @%1$s</string>
+    <string name="details_retry">Retry</string>
+    <string name="details_failed_to_load">Failed to load</string>
+
+    <!-- Settings Screen -->
+    <string name="settings_appearance">Appearance</string>
+    <string name="settings_theme">Theme</string>
+    <string name="theme_light">Light</string>
+    <string name="theme_dark">Dark</string>
+    <string name="theme_system">System default</string>
+
+    <!-- Content Descriptions -->
+    <string name="cd_go_back">Go Back</string>
+    <string name="cd_settings">Settings</string>
+    <string name="cd_share">Share</string>
+    <string name="cd_add_to_favorites">Add to favorites</string>
+    <string name="cd_remove_from_favorites">Remove from favorites</string>
+
+    <!-- Error Messages -->
+    <string name="error_something_went_wrong">Something went wrong</string>
+    <string name="error_failed_to_load_gifs">Failed to load GIFs</string>
+
+    <!-- Share -->
+    <string name="share_gif">Share GIF</string>
 </resources>

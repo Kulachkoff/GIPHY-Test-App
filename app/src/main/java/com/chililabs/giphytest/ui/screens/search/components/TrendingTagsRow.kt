@@ -9,7 +9,7 @@ import androidx.compose.material3.FilterChip
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import com.chililabs.giphytest.ui.theme.Dimens
 
 @Composable
 fun TrendingTagsRow(
@@ -20,8 +20,11 @@ fun TrendingTagsRow(
 ) {
     LazyRow(
         modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.spacedBy(8.dp),
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 8.dp)
+        horizontalArrangement = Arrangement.spacedBy(Dimens.trendingTagsSpacing),
+        contentPadding = PaddingValues(
+            horizontal = Dimens.trendingTagsHorizontal,
+            vertical = Dimens.trendingTagsVertical
+        )
     ) {
         items(
             items = trendingSearches,

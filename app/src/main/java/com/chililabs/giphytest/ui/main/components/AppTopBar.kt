@@ -9,7 +9,10 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.res.stringResource
+import com.chililabs.giphytest.R
 import com.chililabs.giphytest.ui.navigation.Route
+import com.chililabs.giphytest.utils.ext.getTitleRes
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -21,7 +24,9 @@ fun AppTopBar(
 ) {
     TopAppBar(
         title = {
-            Text(text = title ?: currentRoute.title)
+            Text(
+                text = title ?: stringResource(currentRoute.getTitleRes())
+            )
         },
         navigationIcon = {
             if (currentRoute.hasNavigationButton) {
@@ -30,7 +35,7 @@ fun AppTopBar(
                     content = {
                         Icon(
                             imageVector = Icons.AutoMirrored.Default.ArrowBack,
-                            contentDescription = "Go Back"
+                            contentDescription = stringResource(R.string.cd_go_back)
                         )
                     }
                 )

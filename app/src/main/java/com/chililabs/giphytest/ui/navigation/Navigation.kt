@@ -4,11 +4,13 @@ import android.content.Intent
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.navigation.NavController
 import androidx.navigation.NavGraphBuilder
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.navigation
+import com.chililabs.giphytest.R
 import com.chililabs.giphytest.ui.main.NavigationViewModel
 import com.chililabs.giphytest.ui.main.TopBarAction
 import com.chililabs.giphytest.ui.main.TopBarConfig
@@ -155,19 +157,22 @@ fun NavGraphBuilder.detailsGraph(
                         type = "text/plain"
                         putExtra(Intent.EXTRA_TEXT, effect.url)
                     }
-                    context.startActivity(Intent.createChooser(send, "Share GIF"))
+                    context.startActivity(
+                        Intent.createChooser(send, context.getString(R.string.share_gif))
+                    )
                 }
                 else -> Unit
             }
         }
     ) { state, onEvent, _ ->
+        val context = LocalContext.current
         LaunchedEffect(Unit) {
             navigationViewModel.setCurrentRoute(DetailsRoute)
         }
 
         // Update top bar with dynamic content from DetailsState
         LaunchedEffect(state.gif, state.isFavorite) {
-            val title = state.gif?.title ?: "Details"
+            val title = state.gif?.title ?: context.getString(R.string.nav_details)
             val actions = buildList {
                 state.gif?.url?.let {
                     add(TopBarAction.Share(onClick = { onEvent(DetailsEvent.Share) }))

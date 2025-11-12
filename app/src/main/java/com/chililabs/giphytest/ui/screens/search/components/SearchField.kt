@@ -22,7 +22,9 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.graphics.vector.ImageVector
-import androidx.compose.ui.unit.dp
+import androidx.compose.ui.res.stringResource
+import com.chililabs.giphytest.R
+import com.chililabs.giphytest.ui.theme.Dimens
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -33,7 +35,7 @@ fun SearchField(
     onClear: () -> Unit,
     placeholder: String,
     singleLine: Boolean = true,
-    shape: Shape = RoundedCornerShape(8.dp),
+    shape: Shape = RoundedCornerShape(Dimens.searchFieldCornerRadius),
     leadingIcon: ImageVector? = Icons.Default.Search,
     trailingIcon: ImageVector? = Icons.Default.Close,
     suggestions: List<String> = emptyList(),
@@ -70,7 +72,7 @@ fun SearchField(
                             trailingIcon?.let {
                                 Icon(
                                     imageVector = it,
-                                    contentDescription = "Clear Search"
+                                    contentDescription = stringResource(R.string.cd_clear_search)
                                 )
                             }
                         }
@@ -81,7 +83,7 @@ fun SearchField(
                 leadingIcon?.let {
                     Icon(
                         imageVector = leadingIcon,
-                        contentDescription = "Search GIPHY"
+                        contentDescription = stringResource(R.string.cd_search)
                     )
                 }
             }

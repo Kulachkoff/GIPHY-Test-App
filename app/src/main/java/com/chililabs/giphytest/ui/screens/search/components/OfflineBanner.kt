@@ -14,7 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.unit.dp
+import com.chililabs.giphytest.ui.theme.Dimens
 
 @Composable
 fun OfflineBanner(
@@ -37,7 +37,7 @@ fun OfflineBanner(
             modifier = modifier
                 .fillMaxWidth()
                 .background(MaterialTheme.colorScheme.errorContainer)
-                .padding(vertical = 4.dp),
+                .padding(vertical = Dimens.offlineBannerVertical),
             text = text,
             textAlign = TextAlign.Center,
             color = MaterialTheme.colorScheme.onErrorContainer,

@@ -8,6 +8,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.viewinterop.AndroidView
+import com.chililabs.giphytest.R
 import com.chililabs.giphytest.utils.constants.Constants.GRID_CELL_PADDING
 import com.chililabs.giphytest.utils.constants.Constants.GRID_ITEM_CORNER_RADIUS
 import com.chililabs.giphytest.utils.constants.Constants.GRID_PLACEHOLDER_COLOR
@@ -49,7 +50,9 @@ fun GiphyGrid(
                 })
                 callback = object : GPHGridCallback {
                     override fun contentDidUpdate(resultCount: Int) {
-                        if (resultCount == -1) onError("Failed to load GIFs")
+                        if (resultCount == -1) {
+                            onError(context.getString(R.string.error_failed_to_load_gifs))
+                        }
                     }
 
                     override fun didSelectMedia(media: Media) {
