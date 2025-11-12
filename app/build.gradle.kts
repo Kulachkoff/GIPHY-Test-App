@@ -1,3 +1,5 @@
+import com.android.build.gradle.internal.api.BaseVariantOutputImpl
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -36,6 +38,13 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+        }
+    }
+
+    applicationVariants.all {
+        outputs.all {
+            val output = this as BaseVariantOutputImpl
+            output.outputFileName = "giphy_${name}-${versionName}.apk"
         }
     }
 
