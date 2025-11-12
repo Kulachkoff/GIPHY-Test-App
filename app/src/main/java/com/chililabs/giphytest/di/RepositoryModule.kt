@@ -2,8 +2,10 @@ package com.chililabs.giphytest.di
 
 import com.chililabs.giphytest.data.repo.FavoritesRepositoryImpl
 import com.chililabs.giphytest.data.repo.GifsRepositoryImpl
+import com.chililabs.giphytest.data.repo.TrendingSearchesRepositoryImpl
 import com.chililabs.giphytest.domain.repo.FavoritesRepository
 import com.chililabs.giphytest.domain.repo.GifsRepository
+import com.chililabs.giphytest.domain.repo.TrendingSearchesRepository
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -18,4 +20,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindFavoritesRepository(impl: FavoritesRepositoryImpl): FavoritesRepository
+
+    @Binds
+    abstract fun bindTrendingSearchesRepository(impl: TrendingSearchesRepositoryImpl): TrendingSearchesRepository
 }
