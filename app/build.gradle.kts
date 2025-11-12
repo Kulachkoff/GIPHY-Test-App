@@ -1,7 +1,3 @@
-
-import java.io.FileInputStream
-import java.util.Properties
-
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.kotlin.android)
@@ -22,21 +18,15 @@ android {
         minSdk = 24
         targetSdk = 36
         versionName = project.version.toString()
-        versionCode = 1
+        versionCode = buildVersionCode(project.version.toString())
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // TODO: Move this logic
-        val properties = Properties()
-        val localPropertiesFile = project.rootProject.file("local.properties")
-
-        if (localPropertiesFile.canRead()) properties.load(FileInputStream(localPropertiesFile))
-        else println("Warning: local.properties file not found or not readable.")
-
-        val giphyApiKey = properties.getProperty("giphy.api.key", "")
+        val giphyApiKey = BuildConfigUtils.readGiphyApiKey(project)
+        val apiBaseUrl = BuildConfigUtils.getGiphyApiBaseUrl()
 
         buildConfigField("String", "GIPHY_API_KEY", "\"$giphyApiKey\"")
-        buildConfigField("String", "API_BASE_URL", "\"https://api.giphy.com/\"")
+        buildConfigField("String", "API_BASE_URL", "\"$apiBaseUrl\"")
     }
 
     buildTypes {
@@ -71,6 +61,17 @@ android {
         implementation {
             exclude(group = "com.intellij", module = "annotations")
         }
+    }
+}
+
+// Task to print version information (mostly useful for debugging and semantic versioning tests)
+tasks.register("printVersionInfo") {
+    doLast {
+        val versionStr = project.version.toString()
+        val versionCode = buildVersionCode(versionStr)
+        println("Version Name: $versionStr")
+        println("Version Code: $versionCode")
+        println("Calculation: ${versionStr} -> $versionCode")
     }
 }
 
