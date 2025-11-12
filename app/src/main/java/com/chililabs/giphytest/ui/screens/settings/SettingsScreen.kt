@@ -40,11 +40,7 @@ fun SettingsScreen(
                 modifier = Modifier.fillMaxWidth(),
                 headlineContent = {
                     Text(
-                        text = when (theme) {
-                            AppTheme.Light -> "Light"
-                            AppTheme.Dark -> "Dark"
-                            AppTheme.System -> "System Default"
-                        }
+                        text = theme.value
                     )
                 },
                 leadingContent = {
