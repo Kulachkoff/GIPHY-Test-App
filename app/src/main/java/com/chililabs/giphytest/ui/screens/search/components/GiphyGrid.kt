@@ -8,10 +8,10 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.viewinterop.AndroidView
-import com.chililabs.giphytest.utils.Constants.GRID_CELL_PADDING
-import com.chililabs.giphytest.utils.Constants.GRID_ITEM_CORNER_RADIUS
-import com.chililabs.giphytest.utils.Constants.GRID_PLACEHOLDER_COLOR
-import com.chililabs.giphytest.utils.Constants.GRID_THREE_COLUMNS_MIN_WIDTH_DP
+import com.chililabs.giphytest.utils.constants.Constants.GRID_CELL_PADDING
+import com.chililabs.giphytest.utils.constants.Constants.GRID_ITEM_CORNER_RADIUS
+import com.chililabs.giphytest.utils.constants.Constants.GRID_PLACEHOLDER_COLOR
+import com.chililabs.giphytest.utils.constants.Constants.GRID_THREE_COLUMNS_MIN_WIDTH_DP
 import com.giphy.sdk.core.models.Media
 import com.giphy.sdk.core.models.enums.MediaType
 import com.giphy.sdk.ui.GiphyLoadingProvider

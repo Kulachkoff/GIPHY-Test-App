@@ -15,6 +15,7 @@ class GetAutocompleteSuggestionsUseCase @Inject constructor(
     private val repository: TrendingSearchesRepository,
     @IODispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
+
     operator fun invoke(query: String): Flow<GetAutocompleteSuggestionsResult> =
         repository.getAutocompleteSuggestions(query)
             .mapToResult()

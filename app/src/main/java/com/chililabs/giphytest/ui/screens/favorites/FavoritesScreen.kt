@@ -19,7 +19,7 @@ import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.viewinterop.AndroidView
-import com.chililabs.giphytest.utils.Constants.GRID_THREE_COLUMNS_MIN_WIDTH_DP
+import com.chililabs.giphytest.utils.constants.Constants.GRID_THREE_COLUMNS_MIN_WIDTH_DP
 import com.giphy.sdk.ui.views.GPHMediaView
 
 @Composable

@@ -5,8 +5,8 @@ import androidx.lifecycle.viewModelScope
 import com.chililabs.giphytest.domain.usecase.GetAutocompleteSuggestionsUseCase
 import com.chililabs.giphytest.domain.usecase.GetTrendingSearchesUseCase
 import com.chililabs.giphytest.ui.base.BaseViewModel
-import com.chililabs.giphytest.utils.Constants.AUTOCOMPLETE_DEBOUNCE_MS
-import com.chililabs.giphytest.utils.Constants.SEARCH_DEBOUNCE_MS
+import com.chililabs.giphytest.utils.constants.Constants.AUTOCOMPLETE_DEBOUNCE_MS
+import com.chililabs.giphytest.utils.constants.Constants.SEARCH_DEBOUNCE_MS
 import com.chililabs.giphytest.utils.network.NetworkMonitor
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.ExperimentalCoroutinesApi

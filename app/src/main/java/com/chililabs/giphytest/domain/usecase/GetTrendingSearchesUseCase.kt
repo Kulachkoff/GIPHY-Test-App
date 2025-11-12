@@ -15,6 +15,7 @@ class GetTrendingSearchesUseCase @Inject constructor(
     private val repository: TrendingSearchesRepository,
     @IODispatcher private val ioDispatcher: CoroutineDispatcher
 ) {
+
     operator fun invoke(): Flow<GetTrendingSearchesResult> =
         repository.getTrendingSearches()
             .mapToResult()

@@ -8,7 +8,9 @@ import androidx.compose.material3.dynamicDarkColorScheme
 import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
+import com.chililabs.giphytest.domain.model.AppTheme
 
 private val DarkColorScheme = darkColorScheme(
     primary = Purple80,
@@ -24,10 +26,17 @@ private val LightColorScheme = lightColorScheme(
 
 @Composable
 fun GiphyAppTheme(
-    darkTheme: Boolean = isSystemInDarkTheme(),
+    theme: AppTheme? = null,
     dynamicColor: Boolean = true,
     content: @Composable () -> Unit
 ) {
+    val systemDarkTheme = isSystemInDarkTheme()
+    val darkTheme = when (theme) {
+        AppTheme.Light -> false
+        AppTheme.Dark -> true
+        AppTheme.System, null -> systemDarkTheme
+    }
+
     val colorScheme = when {
         dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
             val context = LocalContext.current

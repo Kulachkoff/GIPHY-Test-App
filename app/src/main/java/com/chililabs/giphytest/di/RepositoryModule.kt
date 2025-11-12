@@ -1,8 +1,10 @@
 package com.chililabs.giphytest.di
 
+import com.chililabs.giphytest.data.local.datastore.AppSettingsRepositoryImpl
 import com.chililabs.giphytest.data.repo.FavoritesRepositoryImpl
 import com.chililabs.giphytest.data.repo.GifsRepositoryImpl
 import com.chililabs.giphytest.data.repo.TrendingSearchesRepositoryImpl
+import com.chililabs.giphytest.domain.repo.AppSettingsRepository
 import com.chililabs.giphytest.domain.repo.FavoritesRepository
 import com.chililabs.giphytest.domain.repo.GifsRepository
 import com.chililabs.giphytest.domain.repo.TrendingSearchesRepository
@@ -23,4 +25,7 @@ abstract class RepositoryModule {
 
     @Binds
     abstract fun bindTrendingSearchesRepository(impl: TrendingSearchesRepositoryImpl): TrendingSearchesRepository
+
+    @Binds
+    abstract fun bindSettingsRepository(impl: AppSettingsRepositoryImpl): AppSettingsRepository
 }

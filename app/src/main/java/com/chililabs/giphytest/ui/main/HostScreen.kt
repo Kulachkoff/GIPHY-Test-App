@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Favorite
 import androidx.compose.material.icons.filled.FavoriteBorder
+import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material.icons.filled.Share
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -23,6 +24,7 @@ import com.chililabs.giphytest.ui.main.components.AppTopBar
 import com.chililabs.giphytest.ui.navigation.FavoritesRoute
 import com.chililabs.giphytest.ui.navigation.Navigation
 import com.chililabs.giphytest.ui.navigation.SearchRoute
+import com.chililabs.giphytest.ui.navigation.SettingsRoute
 import com.chililabs.giphytest.utils.ext.hasBottomBar
 import com.chililabs.giphytest.utils.ext.hasTopBar
 
@@ -49,6 +51,14 @@ fun HostScreen(
                     onBackClick = { navController.popBackStack() },
                     title = topBarConfig.title,
                     actions = {
+                        if (currentRoute == SearchRoute) {
+                            IconButton(onClick = { navController.navigate(SettingsRoute.route) }) {
+                                Icon(
+                                    imageVector = Icons.Default.Settings,
+                                    contentDescription = "Settings"
+                                )
+                            }
+                        }
                         topBarConfig.actions.forEach { action ->
                             when (action) {
                                 is TopBarAction.Share -> {
@@ -96,9 +106,10 @@ fun HostScreen(
                             },
                             icon = {
                                 val icon = if (currentRoute == route) route.selectedIcon else route.icon
+                                val description = route.iconDescription
                                 Icon(
                                     imageVector = icon,
-                                    contentDescription = null
+                                    contentDescription = description
                                 )
                             },
                             label = { Text(text = route.title) }

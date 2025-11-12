@@ -1,11 +1,16 @@
 package com.chililabs.giphytest.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.core.DataStoreFactory
+import androidx.datastore.dataStoreFile
+import com.chililabs.giphytest.proto.AppSettings
 import com.chililabs.giphytest.utils.annotation.AppCoroutineScope
 import com.chililabs.giphytest.utils.annotation.DefaultDispatcher
 import com.chililabs.giphytest.utils.annotation.IODispatcher
 import com.chililabs.giphytest.utils.network.ConnectivityNetworkMonitor
 import com.chililabs.giphytest.utils.network.NetworkMonitor
+import com.chililabs.giphytest.utils.serializer.AppSettingsSerializer
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -41,4 +46,19 @@ object AppModule {
     fun providesCoroutineScope(
         @DefaultDispatcher dispatcher: CoroutineDispatcher
     ): CoroutineScope = CoroutineScope(SupervisorJob() + dispatcher)
+
+    @Provides
+    @Singleton
+    fun provideAppSettingsStore(
+        @ApplicationContext context: Context,
+        @IODispatcher ioDispatcher: CoroutineDispatcher,
+        @AppCoroutineScope scope: CoroutineScope,
+        appSettingsSerializer: AppSettingsSerializer
+    ): DataStore<AppSettings> =
+        DataStoreFactory.create(
+            serializer = appSettingsSerializer,
+            scope = CoroutineScope(scope.coroutineContext + ioDispatcher)
+        ) {
+            context.dataStoreFile("app_settings.pb")
+        }
 }

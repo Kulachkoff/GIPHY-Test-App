@@ -1,4 +1,4 @@
-package com.chililabs.giphytest.utils
+package com.chililabs.giphytest.utils.constants
 
 object Constants {
     const val SEARCH_DEBOUNCE_MS = 500L

@@ -56,6 +56,13 @@ sealed class Route(
             ) {
                 fun build(gifId: String): String = "details/$gifId"
             }
+
+            data object Settings : Route(
+                route = "settings",
+                title = "Settings",
+                scaffoldConfig = ScaffoldConfig.NO_BOTTOM_BAR,
+                hasNavigationButton = true
+            )
         }
     }
 }

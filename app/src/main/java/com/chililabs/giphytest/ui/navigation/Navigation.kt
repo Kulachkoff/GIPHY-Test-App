@@ -27,12 +27,17 @@ import com.chililabs.giphytest.ui.screens.search.SearchEvent
 import com.chililabs.giphytest.ui.screens.search.SearchScreen
 import com.chililabs.giphytest.ui.screens.search.SearchState
 import com.chililabs.giphytest.ui.screens.search.SearchViewModel
+import com.chililabs.giphytest.ui.screens.settings.SettingsEvent
+import com.chililabs.giphytest.ui.screens.settings.SettingsScreen
+import com.chililabs.giphytest.ui.screens.settings.SettingsState
+import com.chililabs.giphytest.ui.screens.settings.SettingsViewModel
 import com.chililabs.giphytest.utils.ext.screenWithBaseVM
 
 typealias MainRoute = Route.Main
 typealias SearchRoute = Route.Main.Tab.Search
 typealias FavoritesRoute = Route.Main.Tab.Favorites
 typealias DetailsRoute = Route.Main.Common.Details
+typealias SettingsRoute = Route.Main.Common.Settings
 
 @Composable
 fun Navigation(
@@ -59,6 +64,7 @@ fun NavGraphBuilder.mainGraph(
     ) {
         tabsGraph(navController, navigationViewModel)
         detailsGraph(navController, navigationViewModel)
+        settingsGraph(navController, navigationViewModel)
     }
 }
 
@@ -81,7 +87,10 @@ fun NavGraphBuilder.tabsGraph(
             navigationViewModel.setCurrentRoute(SearchRoute)
         }
 
-        SearchScreen(state = state, onEvent = onEvent)
+        SearchScreen(
+            state = state,
+            onEvent = onEvent
+        )
     }
 
     screenWithBaseVM<FavoritesViewModel, FavoritesState, FavoritesEvent>(
@@ -100,7 +109,31 @@ fun NavGraphBuilder.tabsGraph(
             navigationViewModel.setCurrentRoute(FavoritesRoute)
         }
 
-        FavoritesScreen(state = state, onEvent = onEvent)
+        FavoritesScreen(
+            state = state,
+            onEvent = onEvent
+        )
+    }
+}
+
+fun NavGraphBuilder.settingsGraph(
+    navController: NavHostController,
+    navigationViewModel: NavigationViewModel
+) {
+    screenWithBaseVM<SettingsViewModel, SettingsState, SettingsEvent>(
+        route = SettingsRoute.route,
+        navController = navController,
+        reverse = true,
+        stateOf = { it.state }
+    ) { state, onEvent, _ ->
+        LaunchedEffect(Unit) {
+            navigationViewModel.setCurrentRoute(SettingsRoute)
+        }
+
+        SettingsScreen(
+            state = state,
+            onEvent = onEvent
+        )
     }
 }
 
